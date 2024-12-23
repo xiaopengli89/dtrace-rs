@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 description = "Rust-like bindings to dtrace"
 license = "Apache-2.0 OR MIT"
+repository = "https://github.com/xiaopengli89/dtrace-rs"
 
 [dependencies]
 libc = "0.2.169"
