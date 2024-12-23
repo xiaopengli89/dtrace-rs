@@ -10,4 +10,6 @@ mod macos;
 pub enum Error {
     #[error("dtrace: {0}")]
     DTrace(ffi::c_int),
+    #[error("nul")]
+    NulError(#[from] ffi::NulError),
 }

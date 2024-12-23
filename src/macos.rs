@@ -57,7 +57,7 @@ impl Dtrace {
         unsafe { dtrace::dtrace_errno(self.h) }
     }
 
-    pub fn setopt(&mut self, opt: &ffi::CStr, val: &ffi::CStr) -> Result<(), Error> {
+    pub fn setopt_c(&mut self, opt: &ffi::CStr, val: &ffi::CStr) -> Result<(), Error> {
         let err = unsafe { dtrace::dtrace_setopt(self.h, opt.as_ptr(), val.as_ptr()) };
         if err != 0 {
             Err(Error::DTrace(err))
@@ -66,7 +66,13 @@ impl Dtrace {
         }
     }
 
-    pub fn exec_program(&mut self, script: &ffi::CStr) -> Result<(), Error> {
+    pub fn setopt(&mut self, opt: &str, val: &str) -> Result<(), Error> {
+        let opt = ffi::CString::new(opt)?;
+        let val = ffi::CString::new(val)?;
+        self.setopt_c(&opt, &val)
+    }
+
+    pub fn exec_program_c(&mut self, script: &ffi::CStr) -> Result<(), Error> {
         let prog = unsafe {
             dtrace::dtrace_program_strcompile(
                 self.h,
@@ -87,6 +93,11 @@ impl Dtrace {
             return Err(Error::DTrace(err));
         }
         Ok(())
+    }
+
+    pub fn exec_program(&mut self, script: &str) -> Result<(), Error> {
+        let script = ffi::CString::new(script)?;
+        self.exec_program_c(&script)
     }
 
     pub fn go(&mut self) -> Result<(), Error> {
